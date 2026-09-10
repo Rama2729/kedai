@@ -87,8 +87,8 @@ CREATE TABLE pengeluaran (
 ) ENGINE=InnoDB;
 
 INSERT INTO users (username, password, nama_lengkap, role) VALUES
-('admin', 'kedai', 'Administrator', 'admin'),
-('kasir1', 'kedai', 'Kasir Satu', 'kasir');
+('admin', '$2b$10$bVXA0fKT1pBtsUfgipEF6.mhABRyLmlwhOZP9EqD1T14Ehi8WDg7.', 'Administrator', 'admin'),
+('kasir1', '$2b$10$bVXA0fKT1pBtsUfgipEF6.mhABRyLmlwhOZP9EqD1T14Ehi8WDg7.', 'Kasir Satu', 'kasir');
 
 INSERT INTO kategori_menu (nama_kategori) VALUES
 ('Susu Murni'),
