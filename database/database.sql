@@ -92,18 +92,38 @@ INSERT INTO users (username, password, nama_lengkap, role) VALUES
 
 INSERT INTO kategori_menu (nama_kategori) VALUES
 ('Susu Murni'),
-('Ketan Susu'),
-('Topping Tambahan'),
-('Minuman Lain');
+('Aneka Ketan Susu'),
+('Menu Lainnya'),
+('Menu Pedas');
 
 INSERT INTO menu (kategori_id, nama_menu, harga_jual, hpp) VALUES
-(1, 'Susu Murni Coklat', 8000, 4000),
-(1, 'Susu Murni Original', 7000, 3500),
-(1, 'Susu Murni Strawberry', 8000, 4000),
-(2, 'Ketan Susu Original', 10000, 5000),
-(2, 'Ketan Susu Durian', 13000, 7000),
-(3, 'Topping Keju', 2000, 800),
-(3, 'Topping Meses', 2000, 800);
+(1, 'Susu Murni Original', 10000),
+(1, 'Susu Murni Coklat', 13000),
+(1, 'Susu Murni Milo', 13000),
+(1, 'Susu Murni Kopi', 13000),
+(1, 'Susu Murni Tjampolay', 13000),
+(1, 'Susu Murni Strawberry', 13000),
+(1, 'Susu Murni Taro', 13000),
+(1, 'Susu Murni Telor', 14000),
+(1, 'Susu Murni Jahe', 14000),
+(1, 'Susu Murni Madu', 14000),
+(1, 'Susu Murni Telor Madu Jahe', 21000),
+(2, 'Ketan Susu Original', 8000),
+(2, 'Ketan Susu Coklat', 10000),
+(2, 'Ketan Susu Keju', 10000),
+(2, 'Ketan Susu Matcha', 10000),
+(2, 'Ketan Susu Choco Crunchy', 10000),
+(2, 'Ketan Susu Tiramisu', 10000),
+(2, 'Ketan Susu Coklat Keju', 12000),
+(2, 'Ketan Susu Mangga Keju', 13000),
+(3, 'Kentang Goreng', 8000),
+(3, 'Pisang Bakar Coklat Susu', 10000);
+(3, 'Pisang Bakar Coklat Keju', 12000);
+(3, 'Roti Bakar Coklat Susu', 8000);
+(3, 'Roti Bakar Keju Susu', 10000);
+(3, 'Roti Bakar Coklat Keju Susu', 12000);
+(4, 'Cilok Bumbu Kacang', 10000);
+(4, 'Cilok Goang', 12000);
 
 INSERT INTO kategori_pengeluaran (nama_kategori) VALUES
 ('Belanja Bahan Baku'),
