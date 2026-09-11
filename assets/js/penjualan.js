@@ -1,103 +1,187 @@
-
 (function () {
+
     let keranjang = [];
 
-    const produkGrid       = document.getElementById('produkGrid');
-    const keranjangList    = document.getElementById('keranjangList');
-    const keranjangKosong  = document.getElementById('keranjangKosong');
+    const produkGrid = document.getElementById('produkGrid');
+    const keranjangList = document.getElementById('keranjangList');
+    const keranjangKosong = document.getElementById('keranjangKosong');
     const keranjangTotalEl = document.getElementById('keranjangTotal');
     const jumlahBayarInput = document.getElementById('jumlahBayar');
-    const kembalianText    = document.getElementById('kembalianText');
-    const btnBayar         = document.getElementById('btnBayar');
-    const btnKosongkan     = document.getElementById('btnKosongkan');
+    const kembalianText = document.getElementById('kembalianText');
+    const btnBayar = document.getElementById('btnBayar');
+    const btnKosongkan = document.getElementById('btnKosongkan');
+    const metodeBayar = document.getElementById('metodeBayar');
+    const keterangan = document.getElementById('keterangan');
 
-    if (!produkGrid) return;
+    if (!produkGrid) {
+        return;
+    }
 
     document.querySelectorAll('.filter-btn').forEach(function (btn) {
+
         btn.addEventListener('click', function () {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+
+            document.querySelectorAll('.filter-btn')
+                .forEach(item => item.classList.remove('active'));
+
             btn.classList.add('active');
 
             const kategori = btn.dataset.kategori;
-            document.querySelectorAll('.produk-card').forEach(function (card) {
-                if (kategori === 'semua' || card.dataset.kategori === kategori) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+
+            document.querySelectorAll('.produk-card')
+                .forEach(function (card) {
+
+                    if (
+                        kategori === 'semua' ||
+                        card.dataset.kategori === kategori
+                    ) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
         });
     });
 
     produkGrid.addEventListener('click', function (e) {
-        const card = e.target.closest('.produk-card');
-        if (!card) return;
 
-        const id    = card.dataset.id;
-        const nama  = card.dataset.nama;
+        const card = e.target.closest('.produk-card');
+
+        if (!card) {
+            return;
+        }
+
+        const id = card.dataset.id;
+        const nama = card.dataset.nama;
         const harga = parseFloat(card.dataset.harga);
 
+        tambahProduk(id, nama, harga);
+
+        card.classList.add('selected');
+
+        setTimeout(function () {
+            card.classList.remove('selected');
+        }, 300);
+    });
+
+    function tambahProduk(id, nama, harga) {
+
         const existing = keranjang.find(item => item.id === id);
+
         if (existing) {
             existing.qty += 1;
         } else {
-            keranjang.push({ id, nama, harga, qty: 1 });
+            keranjang.push({
+                id: id,
+                nama: nama,
+                harga: harga,
+                qty: 1
+            });
         }
+
         renderKeranjang();
-    });
+    }
 
     function renderKeranjang() {
+
         keranjangList.innerHTML = '';
 
         if (keranjang.length === 0) {
+
             keranjangList.appendChild(keranjangKosong);
+
             keranjangTotalEl.textContent = formatRupiah(0);
+
             hitungKembalian();
+
             return;
         }
 
         let total = 0;
 
         keranjang.forEach(function (item, index) {
+
             const subtotal = item.harga * item.qty;
+
             total += subtotal;
 
             const row = document.createElement('div');
+
             row.className = 'keranjang-item';
+
             row.innerHTML = `
-                <div>
-                    <div>${item.nama}</div>
-                    <div style="color:#888; font-size:0.8rem;">${formatRupiah(item.harga)} x ${item.qty}</div>
+                <div class="item-info">
+                    <div class="item-name">
+                        ${item.nama}
+                    </div>
+
+                    <div class="item-price">
+                        ${formatRupiah(item.harga)} × ${item.qty}
+                    </div>
                 </div>
+
                 <div class="qty-control">
-                    <button type="button" data-action="kurang" data-index="${index}">-</button>
+
+                    <button
+                        type="button"
+                        data-action="kurang"
+                        data-index="${index}">
+                        −
+                    </button>
+
                     <span>${item.qty}</span>
-                    <button type="button" data-action="tambah" data-index="${index}">+</button>
-                    <button type="button" data-action="hapus" data-index="${index}" style="color:var(--color-danger); border:none; background:none; cursor:pointer; margin-left:4px;">&times;</button>
+
+                    <button
+                        type="button"
+                        data-action="tambah"
+                        data-index="${index}">
+                        +
+                    </button>
+
+                    <button
+                        type="button"
+                        data-action="hapus"
+                        data-index="${index}"
+                        class="hapus-item">
+                        ×
+                    </button>
+
                 </div>
             `;
+
             keranjangList.appendChild(row);
         });
 
         keranjangTotalEl.textContent = formatRupiah(total);
+
         hitungKembalian();
     }
 
     keranjangList.addEventListener('click', function (e) {
-        const btn = e.target.closest('button[data-action]');
-        if (!btn) return;
 
-        const index = parseInt(btn.dataset.index, 10);
+        const btn = e.target.closest('button[data-action]');
+
+        if (!btn) {
+            return;
+        }
+
+        const index = parseInt(btn.dataset.index);
         const action = btn.dataset.action;
 
         if (action === 'tambah') {
             keranjang[index].qty += 1;
-        } else if (action === 'kurang') {
+        }
+
+        if (action === 'kurang') {
+
             keranjang[index].qty -= 1;
+
             if (keranjang[index].qty <= 0) {
                 keranjang.splice(index, 1);
             }
-        } else if (action === 'hapus') {
+        }
+
+        if (action === 'hapus') {
             keranjang.splice(index, 1);
         }
 
@@ -105,72 +189,161 @@
     });
 
     function getTotalKeranjang() {
-        return keranjang.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+
+        return keranjang.reduce(function (total, item) {
+
+            return total + (item.harga * item.qty);
+
+        }, 0);
     }
 
     function hitungKembalian() {
+
+        if (!jumlahBayarInput || !kembalianText) {
+            return;
+        }
+
         const total = getTotalKeranjang();
-        const bayar = parseFloat(jumlahBayarInput.value) || 0;
+
+        const bayar =
+            parseFloat(jumlahBayarInput.value) || 0;
+
         const kembalian = bayar - total;
-        kembalianText.textContent = formatRupiah(kembalian < 0 ? 0 : kembalian);
-        kembalianText.style.color = kembalian < 0 ? 'var(--color-danger)' : 'var(--color-success)';
+
+        if (kembalian < 0) {
+
+            kembalianText.textContent =
+                'Kurang ' +
+                formatRupiah(Math.abs(kembalian));
+
+            kembalianText.style.color =
+                'var(--color-danger)';
+
+        } else {
+
+            kembalianText.textContent =
+                formatRupiah(kembalian);
+
+            kembalianText.style.color =
+                'var(--color-success)';
+        }
     }
 
-    jumlahBayarInput.addEventListener('input', hitungKembalian);
+    if (jumlahBayarInput) {
+        jumlahBayarInput.addEventListener(
+            'input',
+            hitungKembalian
+        );
+    }
 
-    btnKosongkan.addEventListener('click', function () {
-        if (keranjang.length === 0) return;
-        if (confirm('Kosongkan semua item di keranjang?')) {
-            keranjang = [];
-            renderKeranjang();
-        }
-    });
+    if (btnKosongkan) {
 
-    btnBayar.addEventListener('click', function () {
-        if (keranjang.length === 0) {
-            alert('Keranjang masih kosong.');
-            return;
-        }
+        btnKosongkan.addEventListener('click', function () {
 
-        const total = getTotalKeranjang();
-        const bayar = parseFloat(jumlahBayarInput.value) || 0;
-
-        if (bayar < total) {
-            alert('Jumlah bayar kurang dari total belanja.');
-            return;
-        }
-
-        const payload = {
-            items: keranjang.map(item => ({ menu_id: item.id, qty: item.qty })),
-            metode_bayar: document.getElementById('metodeBayar').value,
-            bayar: bayar,
-            keterangan: document.getElementById('keterangan').value
-        };
-
-        btnBayar.disabled = true;
-        btnBayar.textContent = 'Memproses...';
-
-        fetch('simpan.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                alert('Transaksi berhasil disimpan!\nNo. Transaksi: ' + data.no_transaksi);
-                window.location.reload();
-            } else {
-                alert('Gagal menyimpan transaksi: ' + (data.message || 'Terjadi kesalahan.'));
-                btnBayar.disabled = false;
-                btnBayar.textContent = 'Proses Bayar';
+            if (keranjang.length === 0) {
+                return;
             }
-        })
-        .catch(err => {
-            alert('Terjadi kesalahan koneksi: ' + err.message);
-            btnBayar.disabled = false;
-            btnBayar.textContent = 'Proses Bayar';
+
+            if (confirm('Kosongkan keranjang?')) {
+
+                keranjang = [];
+
+                renderKeranjang();
+            }
         });
-    });
+    }
+
+    if (btnBayar) {
+
+        btnBayar.addEventListener('click', function () {
+
+            if (keranjang.length === 0) {
+                alert('Keranjang masih kosong.');
+                return;
+            }
+
+            const total = getTotalKeranjang();
+
+            const bayar =
+                parseFloat(jumlahBayarInput.value) || 0;
+
+            if (bayar < total) {
+                alert('Jumlah pembayaran kurang.');
+                return;
+            }
+
+            const payload = {
+
+                items: keranjang.map(function (item) {
+
+                    return {
+                        menu_id: item.id,
+                        qty: item.qty
+                    };
+
+                }),
+
+                metode_bayar:
+                    metodeBayar ? metodeBayar.value : 'Tunai',
+
+                bayar: bayar,
+
+                keterangan:
+                    keterangan ? keterangan.value : ''
+            };
+
+            btnBayar.disabled = true;
+            btnBayar.innerHTML = 'Memproses...';
+
+            fetch('simpan.php', {
+
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(payload)
+
+            })
+
+            .then(response => response.json())
+
+            .then(function (data) {
+
+                if (data.status === 'success') {
+
+                    alert(
+                        'Transaksi berhasil\n\n' +
+                        'No. Transaksi : ' +
+                        data.no_transaksi
+                    );
+
+                    window.location.reload();
+
+                } else {
+
+                    alert(
+                        data.message ||
+                        'Gagal menyimpan transaksi.'
+                    );
+
+                    btnBayar.disabled = false;
+                    btnBayar.innerHTML = 'Proses Bayar';
+                }
+            })
+
+            .catch(function (error) {
+
+                alert(
+                    'Koneksi gagal : ' +
+                    error.message
+                );
+
+                btnBayar.disabled = false;
+                btnBayar.innerHTML = 'Proses Bayar';
+            });
+        });
+    }
 
 })();
